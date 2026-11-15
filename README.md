@@ -1,37 +1,158 @@
-# credit-risk-classification
+# Credit Risk Classification Using Machine Learning
 
-# Overview
+## Project Overview
 
-The purpose is to analyze a dataset of lending activity from a peer based lending service company that helps to build a model that can identify the creditworthiness of borrowers. The dataset reflected the size of the loan, the interest rate, the income of the borrower, the debt-to-income ratio, the total number of accounts, the negative marks and the total debt of each loan application.
+This project evaluates the use of supervised machine learning to classify lending applications according to credit risk. The objective is to distinguish healthy loans from high-risk loans and assess whether resampling techniques improve the identification of potentially risky borrowers.
 
-Within the dataset there is a discrepancy between the healthy loans (0) counts and the high-risk loans (1) counts: 75036 healthy loans count vs 2500 high-risk count. To process this analysis, several stages of the machine learning were made, including pre-processing, training and validating and evaluating the model.
+The analysis compares two logistic regression models:
 
-I utilized the supervised learning classification model called Logistic Regression to predict the probability of the healthy loans against the high-risk loans. I then utilized the resampling method to generate more data points that could balance the dataset and make a more accurate model.
+1. A baseline logistic regression model trained on the original training data.
+2. A logistic regression model trained on data balanced using random oversampling.
 
-# Results
+The project emphasizes model evaluation, class imbalance, and the operational tradeoff between identifying risky loans and incorrectly flagging healthy loans.
 
-Machine Learning Model 1:
+## Business Problem
 
-Accuracy - how often the model is correct: 95%
+Financial institutions must evaluate lending risk while balancing potential credit losses against the opportunity cost of rejecting creditworthy borrowers.
 
-Precision - the ratio of the correctly predicted true positives to the total predicted positive observations: the model performs better predicting healthy loans (99%) than high-risk loans (precision 91%).
+An effective classification model should identify high-risk loans without generating excessive false positives. Because high-risk loans represent a relatively small proportion of the dataset, overall accuracy alone may obscure important weaknesses in detecting the minority class.
 
-Recall - the ratio of actual positives identified correctly: the model performs better predicting healthy loans (99%) than high-risk loans (91%).
+This analysis therefore emphasizes balanced accuracy, precision, recall, and confusion matrices.
 
-Support - the number of actual occurrences of the class in the specified dataset: according to the support column, the model is imbalanced in the training data (healthy loans 18759 vs high-risk loans 625), indicating structural weaknesses in the reported scores, in the evaluation process.
+## Dataset
 
-Machine Learning Model 2:
+The dataset contains 77,536 lending observations and includes the following variables:
 
-Accuracy - how often the model is correct: 99%
+- Loan size
+- Interest rate
+- Borrower income
+- Debt-to-income ratio
+- Number of accounts
+- Derogatory marks
+- Total debt
+- Loan status
 
-Precision - the ratio of the correctly predicted true positives to the total predicted positive observations: the model performs equally well for predicting healthy loans (99%) and high-risk loans (99%).
+The target variable is `loan_status`, where:
 
-Recall - the ratio of actual positives identified correctly: the model performs equally well for predicting healthy loans (99%) and high-risk loans (99%).
+- `0` represents a healthy loan.
+- `1` represents a high-risk loan.
 
-Support - the number of actual occurrences of the class in the specified dataset: according to the support column, the model is balanced in the training data (healthy loans 56277 vs high-risk loans 56277), indicating structural strength in the reported scores, in the evaluation process.
+The dataset contains 75,036 healthy loans and 2,500 high-risk loans, creating substantial class imbalance.
 
-# Summary
+## Technologies and Libraries
 
-Overall the accuracy within the logistic regression model is high, at 95%. But when it comes to the recall, it is doing it better for the healthy loans which is 99%, but unhealthy loans are 91%. So, that is where the model is not doing as good. The healhty loan applicants will be able to pay back their loans. The issues lies in the risky loans, where we want to make sure that we don't approve those loans by mistake and we lose money for the bank.
+- Python
+- Jupyter Notebook
+- Pandas
+- NumPy
+- Scikit-learn
+- Imbalanced-learn
 
-With the oversample data, it is doing a better job since the accuracy has increased from 95% to 99%. False negatives have reduced significantly and the recall hasn't changed at all. Recall for high risk applicants has increased from 91% to 99% and we are seeing a high degree of accuracy after we oversample the data.
+## Methodology
+
+### 1. Data Preparation
+
+The lending dataset is loaded into a Pandas DataFrame. The predictors are separated from the target variable, and the observations are divided into training and testing sets.
+
+### 2. Baseline Logistic Regression
+
+A logistic regression classifier is trained using the original training data.
+
+Predictions are generated on the test set and evaluated using balanced accuracy, a confusion matrix, and a classification report.
+
+### 3. Random Oversampling
+
+To address class imbalance, `RandomOverSampler` is applied exclusively to the training data.
+
+The oversampled training set contains 56,271 observations for each class.
+
+The original test set remains separate from the resampling procedure.
+
+### 4. Resampled Logistic Regression
+
+A second logistic regression classifier is trained on the oversampled training data and evaluated against the original test set.
+
+This approach allows comparison of the baseline and resampled models without directly oversampling the evaluation data.
+
+## Model Results
+
+The following results are based on the saved outputs in the project notebook.
+
+| Evaluation Metric | Baseline Model | Oversampled Model |
+|---|---:|---:|
+| Balanced accuracy | 95.20% | 99.37% |
+| High-risk loan precision | 84.66% | 84.13% |
+| High-risk loan recall | 90.95% | 99.35% |
+| Correctly identified high-risk loans | 563 | 615 |
+| Missed high-risk loans | 56 | 4 |
+| Healthy loans incorrectly flagged | 102 | 116 |
+
+### Interpretation
+
+The oversampled model demonstrates substantially higher recall for high-risk loans.
+
+Compared with the baseline model, it identifies 52 additional high-risk loans while producing 14 additional false positives.
+
+This represents a meaningful improvement in detecting potentially risky lending applications, although the higher false-positive count could lead to additional manual reviews or unnecessary lending restrictions.
+
+The appropriate model ultimately depends on the relative business costs of missed high-risk loans and incorrectly flagged healthy loans.
+
+## Repository Structure
+
+```text
+credit-risk-classification/
+├── README.md
+├── .gitignore
+└── Credit_Risk/
+    ├── credit_risk_classification.ipynb
+    └── lending_data.csv
+```
+
+## Reproducing the Analysis
+
+1. Clone or download this GitHub repository.
+2. Install Python and Jupyter Notebook.
+3. Install the required packages:
+
+   ```bash
+   pip install pandas numpy scikit-learn imbalanced-learn notebook
+   ```
+
+4. Open a terminal in the `Credit_Risk` folder.
+5. Start Jupyter Notebook:
+
+   ```bash
+   jupyter notebook
+   ```
+
+6. Open `credit_risk_classification.ipynb`.
+7. Select **Run All Cells** to execute the analysis.
+
+The notebook expects `lending_data.csv` to be located in the same directory.
+
+## Limitations and Considerations
+
+- The dataset is highly imbalanced, making ordinary accuracy an insufficient standalone evaluation metric.
+- Random oversampling duplicates minority-class training observations and may increase the risk of overfitting.
+- The reported metrics reflect a particular train/test split and should not be interpreted as guaranteed performance on future lending applications.
+- Additional cross-validation, calibration, and independent validation would strengthen confidence in model performance.
+- False positives and false negatives have different financial and operational consequences.
+- Any real-world credit decision system would require appropriate fairness assessments, regulatory compliance, explainability, monitoring, and human oversight.
+
+## Conclusion
+
+This project demonstrates how class imbalance affects supervised classification and how random oversampling can improve the detection of high-risk loans.
+
+The oversampled logistic regression model achieved a balanced accuracy of approximately 99.37%, compared with 95.20% for the baseline model.
+
+More importantly, high-risk loan recall increased from approximately 90.95% to 99.35%, reducing missed high-risk loans from 56 to 4 in the test set.
+
+The analysis illustrates the importance of evaluating machine learning models using metrics aligned with business risk rather than relying exclusively on overall accuracy.
+
+## Author
+
+**Adam A. Saenz**
+
+Data Analytics | Applied Machine Learning | Business Strategy
+
+[GitHub Profile](https://github.com/AdamSaenz)
